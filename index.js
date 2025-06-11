@@ -32,6 +32,7 @@ async function fetchDeals() {
       console.error('Failed to fetch deals:', res.status, await res.text());
       return [];
     }
+
     const text = await res.text();
     try {
       const data = JSON.parse(text);
@@ -41,6 +42,7 @@ async function fetchDeals() {
       console.error('Response text:', text.slice(0, 200));
       return [];
     }
+
   } catch (err) {
     console.error('Error fetching deals:', err);
     return [];
