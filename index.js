@@ -319,7 +319,20 @@ app.post('/submit', async (req, res) => {
     const confirmationMessage = `${name}様、エントリーありがとうございます！\n都道府県コード: ${prefectureCode}\n車両有無: ${vehicleText}\n報酬希望: ${reward}\n担当者より後日ご連絡いたします。`;
 
     const deals = await fetchDeals();
-    const matched = deals.filter(d => Array.isArray(d.code) && d.code.includes(prefectureCode));
+    const matched = deals.filter(d => {
+      if (typeof d.code === 'string') {
+        try {
+          const parsedCode = JSON.parse(d.code);
+          return Array.isArray(parsedCode) && parsedCode.includes(prefectureCode);
+        } catch (e) {
+          console.error('Failed to parse d.code:', d.code, e);
+          return false;
+        }
+      } else if (Array.isArray(d.code)) {
+        return d.code.includes(prefectureCode);
+      }
+      return false;
+    });    
     let messages = [{ type: 'text', text: confirmationMessage }];
 
     if (matched.length > 0) {
