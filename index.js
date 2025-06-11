@@ -12,8 +12,9 @@ const config = {
 console.log('Environment variables check:');
 console.log('LINE_CHANNEL_SECRET exists:', !!process.env.LINE_CHANNEL_SECRET);
 console.log('LINE_CHANNEL_ACCESS_TOKEN exists:', !!process.env.LINE_CHANNEL_ACCESS_TOKEN);
+console.log('GAS_URL exists:', !!process.env.GAS_URL); // GAS_URLの存在確認を追加
 
-if (!process.env.LINE_CHANNEL_SECRET || !process.env.LINE_CHANNEL_ACCESS_TOKEN) {
+if (!process.env.LINE_CHANNEL_SECRET || !process.env.LINE_CHANNEL_ACCESS_TOKEN || !process.env.GAS_URL) { // GAS_URLのチェックを追加
   console.error('❌ 環境変数が設定されていません');
   process.exit(1);
 }
@@ -23,28 +24,78 @@ const client = new line.Client(config);
 
 const app = express();
 
-const GAS_URL = 'https://script.google.com/macros/s/AKfycbx3Ao9G9hSqTAZ26PrymZzJzcd_2cU_cWUvZJeLUg3j2IyR4tZaYSNLjeyP027Da8Dm/exec';
+const GAS_URL = process.env.GAS_URL; // 環境変数からGAS_URLを取得
 
 async function fetchDeals() {
   try {
-    const res = await fetch(`${GAS_URL}?function=getDeals`);
+    console.log('🔍 Starting GAS fetch (GET)...'); // Changed from POST to GET
+    console.log('🌐 GAS URL:', GAS_URL);
+
+    // const requestBody = { // Removed for GET request
+    //   overview: "doGet" 
+    // };
+    // console.log('📡 Request body:', JSON.stringify(requestBody)); // Removed for GET request
+    
+    const res = await fetch(GAS_URL, { 
+      method: 'GET', // Changed to GET
+      headers: {
+        // 'Content-Type': 'application/json', // Removed for GET request
+        'User-Agent': 'CustomerService/1.0', 
+        'Accept': 'application/json, text/plain, */*'
+      }
+      // body: JSON.stringify(requestBody) // Removed for GET request
+    });
+    
+    console.log('📊 Response status:', res.status);
+    console.log('📊 Response status text:', res.statusText);
+    // console.log('📊 Response headers:', Object.fromEntries(res.headers.entries())); // 詳細デバッグ用にコメントアウト
+
     if (!res.ok) {
-      console.error('Failed to fetch deals:', res.status, await res.text());
+      const errorText = await res.text();
+      console.error('❌ Failed to fetch deals from GAS:', res.status, res.statusText);
+      console.error('❌ GAS Response body (first 500 chars):', errorText.slice(0, 500));
       return [];
     }
 
     const text = await res.text();
+    console.log('📝 Raw GAS response text length:', text.length);
+    console.log('📝 Raw GAS response text preview (first 500 chars):', text.slice(0, 500));
+    
     try {
       const data = JSON.parse(text);
-      return Array.isArray(data) ? data : [];
+      console.log('✅ Successfully parsed JSON from GAS');
+      // console.log('📦 GAS Response structure:', JSON.stringify(data, null, 2)); // 詳細デバッグ用にコメントアウト
+
+      // GASからの期待されるレスポンス構造に適応
+      if (data && data.status === 'success' && data.data !== undefined) {
+        console.log('📦 GAS reported success. Data type:', typeof data.data, 'Is array:', Array.isArray(data.data));
+        return Array.isArray(data.data) ? data.data : [];
+      } else if (Array.isArray(data)) { // GASが直接配列を返す場合のフォールバック
+        console.log('📦 GAS response is a direct array.');
+        return data;
+      } else if (data && data.status === 'error') {
+        console.error('❌ GAS returned an error status:', data.message || 'No message provided.');
+        return [];
+      } else {
+        console.warn('📦 Unexpected JSON structure from GAS (first 500 chars):', JSON.stringify(data, null, 2).slice(0,500));
+        return [];
+      }
+      
     } catch (parseErr) {
-      console.error('Failed to parse deals response:', parseErr);
-      console.error('Response text:', text.slice(0, 200));
+      console.error('❌ Failed to parse JSON response from GAS:', parseErr.message);
+      console.error('❌ GAS Response text was (first 500 chars):', text.slice(0, 500));
+      if (text.toLowerCase().includes('<html')) {
+        console.error('⚠️ GAS response appears to be HTML. Check GAS script deployment and doGet function (it must return a ContentService response).'); // Added note about ContentService
+      }
       return [];
     }
 
-  } catch (err) {
-    console.error('Error fetching deals:', err);
+  } catch (fetchErr) {
+    console.error('❌ Network or fetch error calling GAS:', fetchErr.message);
+    // console.error('❌ Fetch error stack:', fetchErr.stack); // 詳細デバッグ用にコメントアウト
+    if (fetchErr.cause) {
+      console.error('❌ Fetch error cause:', fetchErr.cause);
+    }
     return [];
   }
 }
