@@ -23,6 +23,23 @@ const client = new line.Client(config);
 
 const app = express();
 
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbx3Ao9G9hSqTAZ26PrymZzJzcd_2cU_cWUvZJeLUg3j2IyR4tZaYSNLjeyP027Da8Dm/exec';
+
+async function fetchDeals() {
+  try {
+    const res = await fetch(`${GAS_URL}?function=getDeals`);
+    if (!res.ok) {
+      console.error('Failed to fetch deals:', res.status, await res.text());
+      return [];
+    }
+    const data = await res.json();
+    return Array.isArray(data) ? data : [];
+  } catch (err) {
+    console.error('Error fetching deals:', err);
+    return [];
+  }
+}
+
 // Raw body parser for signature validation
 app.use('/webhook', express.raw({ type: 'application/json' }));
 app.use(express.json());
@@ -199,17 +216,27 @@ app.get('/form', (req, res) => {
 });
 
 // handle form submission
-app.post('/submit', (req, res) => {
+app.post('/submit', async (req, res) => {
   const { userId, name, prefectureCode, hasVehicle, reward } = req.body;
   console.log('Form submitted:', { userId, name, prefectureCode, hasVehicle, reward });
 
   if (userId && name && prefectureCode && hasVehicle && reward) {
     const vehicleText = hasVehicle === 'yes' ? 'あり' : 'なし';
-    const message = `${name}様、エントリーありがとうございます！\n都道府県コード: ${prefectureCode}\n車両有無: ${vehicleText}\n報酬希望: ${reward}\n担当者より後日ご連絡いたします。`;
-    client.pushMessage(userId, {
-      type: 'text',
-      text: message
-    })
+    const confirmationMessage = `${name}様、エントリーありがとうございます！\n都道府県コード: ${prefectureCode}\n車両有無: ${vehicleText}\n報酬希望: ${reward}\n担当者より後日ご連絡いたします。`;
+
+    const deals = await fetchDeals();
+    const matched = deals.filter(d => Array.isArray(d.code) && d.code.includes(prefectureCode));
+    let dealText = '';
+    if (matched.length > 0) {
+      dealText = matched.map(d => d.rawtext || JSON.stringify(d)).join('\n\n');
+    } else {
+      dealText = '現在該当する案件はありません。';
+    }
+
+    client.pushMessage(userId, [
+      { type: 'text', text: confirmationMessage },
+      { type: 'text', text: dealText }
+    ])
       .then(() => {
         console.log('Message sent successfully to user:', userId);
         res.send(`
