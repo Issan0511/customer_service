@@ -7,7 +7,8 @@ This project demonstrates a simple LINE Bot that sends a link to a web form when
 - Uses the `@line/bot-sdk` and `express` packages.
 - Handles LINE `follow` events to send a form link containing the LINE user ID.
 - Serves a basic HTML form at `/form`.
-- On form submission, pushes a message back to the user.
+- The form collects the driver's name, prefecture code, vehicle availability and desired compensation.
+- On form submission, the bot sends a confirmation message back to the user.
 
 ## Setup
 
