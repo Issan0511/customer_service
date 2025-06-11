@@ -193,7 +193,7 @@ function handleEvent(event) {
     const userId = event.source.userId;
     const domain = process.env.NGROK_DOMAIN || 'localhost:3000';
     const protocol = domain.includes('ngrok') ? 'https' : 'http';
-    const link = `${protocol}://${domain}/form?userId=${userId}`;
+    const link = `https://customer-service-hjly.onrender.com/form?userId=${userId}`;
     
     console.log('Sending form link to new follower:', link);
     
