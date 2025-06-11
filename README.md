@@ -19,6 +19,7 @@ This project demonstrates a simple LINE Bot that sends a link to a web form when
 2. Set the following environment variables:
    - `LINE_CHANNEL_SECRET`
    - `LINE_CHANNEL_ACCESS_TOKEN`
+   - `GAS_URL` pointing to your Google Apps Script web app
    - Optional: `PORT` for the server (defaults to `3000`).
 3. Start the server:
    ```bash

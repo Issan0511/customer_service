@@ -7,6 +7,24 @@ const { createFormLinkMessage } = require("./src/messages");
 const { getFormHtml, getSuccessHtml, getErrorHtml } = require("./src/templates");
 const createHandleEvent = require("./src/handlers");
 
+async function sendToSpreadsheet(data) {
+  const res = await fetch(process.env.GAS_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data)
+  });
+
+  if (!res.ok) {
+    throw new Error(`GAS request failed: ${res.status}`);
+  }
+
+  try {
+    return await res.json();
+  } catch (_) {
+    return await res.text();
+  }
+}
+
 const config = {
   channelSecret: process.env.LINE_CHANNEL_SECRET,
   channelAccessToken: process.env.LINE_CHANNEL_ACCESS_TOKEN
@@ -124,6 +142,12 @@ app.post('/submit', async (req, res) => {
   console.log('Form submitted:', { userId, name, prefectureCode, prefecture, hasVehicle, reward });
 
   if (userId && name && prefectureCode && prefecture && hasVehicle && reward) {
+    try {
+      await sendToSpreadsheet({ userId, name, prefectureCode, prefecture, hasVehicle, reward });
+      console.log('Data sent to GAS');
+    } catch (e) {
+      console.error('Failed to send data to GAS:', e);
+    }
     const vehicleText = hasVehicle === 'yes' ? 'あり' : 'なし';
     const confirmationMessage = `${name}様、エントリーありがとうございます！/nお住まいの地域に該当する案件をお探ししています。`;
 
