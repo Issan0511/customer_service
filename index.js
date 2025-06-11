@@ -106,7 +106,7 @@ function createFormLinkMessage(link, prefix = '') {
     altText: 'お客様サポートフォーム',
     template: {
       type: 'buttons',
-      text: `${prefix}\nお客様サポートフォームをご利用ください`,
+      text: `${prefix}\n以下のフォームから情報を入力してください。`,
       actions: [
         { type: 'uri', label: 'フォームを開く', uri: link }
       ]
@@ -242,7 +242,7 @@ app.get('/form', (req, res) => {
       <label>お名前:</label>
       <input type="text" name="name" required>
 
-      <label>都道府県コード:</label>
+      <label>居住地</label>
       <select name="prefectureCode" required>
         <option value="01">北海道</option>
         <option value="02">青森県</option>
@@ -316,7 +316,7 @@ app.post('/submit', async (req, res) => {
 
   if (userId && name && prefectureCode && hasVehicle && reward) {
     const vehicleText = hasVehicle === 'yes' ? 'あり' : 'なし';
-    const confirmationMessage = `${name}様、エントリーありがとうございます！\n都道府県コード: ${prefectureCode}\n車両有無: ${vehicleText}\n報酬希望: ${reward}\n担当者より後日ご連絡いたします。`;
+    const confirmationMessage = `${name}様、エントリーありがとうございます！/nお住まいの地域に該当する案件をお探ししています。`;
 
     const deals = await fetchDeals();
     const matched = deals.filter(d => {
@@ -336,6 +336,7 @@ app.post('/submit', async (req, res) => {
     let messages = [{ type: 'text', text: confirmationMessage }];
 
     if (matched.length > 0) {
+      messages.push({ type: 'text', text: '以下が、お住まいの都道府県に該当する案件です。' });
       messages.push(createDealCarousel(matched));
     } else {
       messages.push({ type: 'text', text: '現在該当する案件はありません。' });
@@ -390,7 +391,7 @@ function handleEvent(event) {
 
     console.log('Sending form link to new follower:', link);
 
-    const messages = [createFormLinkMessage(link, 'ご登録ありがとうございます！')];
+    const messages = [createFormLinkMessage(link, '友達追加ありがとうございます！')];
 
     return client.replyMessage(event.replyToken, messages);
   }
