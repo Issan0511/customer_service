@@ -120,10 +120,10 @@ app.get('/form', (req, res) => {
 
 // handle form submission
 app.post('/submit', async (req, res) => {
-  const { userId, name, prefectureCode, hasVehicle, reward } = req.body;
-  console.log('Form submitted:', { userId, name, prefectureCode, hasVehicle, reward });
+  const { userId, name, prefectureCode, prefecture, hasVehicle, reward } = req.body;
+  console.log('Form submitted:', { userId, name, prefectureCode, prefecture, hasVehicle, reward });
 
-  if (userId && name && prefectureCode && hasVehicle && reward) {
+  if (userId && name && prefectureCode && prefecture && hasVehicle && reward) {
     const vehicleText = hasVehicle === 'yes' ? 'あり' : 'なし';
     const confirmationMessage = `${name}様、エントリーありがとうございます！/nお住まいの地域に該当する案件をお探ししています。`;
 

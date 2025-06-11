@@ -23,7 +23,7 @@ function getFormHtml(userId = '') {
       <input type="text" name="name" required>
 
       <label>居住地</label>
-      <select name="prefectureCode" required>
+      <select id="prefectureSelect" name="prefectureCode" required>
         <option value="01">北海道</option>
         <option value="02">青森県</option>
         <option value="03">岩手県</option>
@@ -72,6 +72,7 @@ function getFormHtml(userId = '') {
         <option value="46">鹿児島県</option>
         <option value="47">沖縄県</option>
       </select>
+      <input type="hidden" name="prefecture" id="prefecture">
 
       <label>車両の有無:</label>
       <select name="hasVehicle" required>
@@ -82,9 +83,18 @@ function getFormHtml(userId = '') {
       <label>報酬希望:</label>
       <input type="text" name="reward" required>
 
-      <button type="submit">送信</button>
+</button>
     </form>
   </div>
+  <script>
+    const select = document.getElementById('prefectureSelect');
+    const hidden = document.getElementById('prefecture');
+    function updatePrefecture() {
+      hidden.value = select.options[select.selectedIndex].text;
+    }
+    select.addEventListener('change', updatePrefecture);
+    updatePrefecture();
+  </script>
 </body>
 </html>`;
 }
