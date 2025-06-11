@@ -83,7 +83,7 @@ function getFormHtml(userId = '') {
       <label>報酬希望:</label>
       <input type="text" name="reward" required>
 
-</button>
+<button type="submit">送信</button>
     </form>
   </div>
   <script>
