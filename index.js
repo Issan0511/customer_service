@@ -32,8 +32,15 @@ async function fetchDeals() {
       console.error('Failed to fetch deals:', res.status, await res.text());
       return [];
     }
-    const data = await res.json();
-    return Array.isArray(data) ? data : [];
+    const text = await res.text();
+    try {
+      const data = JSON.parse(text);
+      return Array.isArray(data) ? data : [];
+    } catch (parseErr) {
+      console.error('Failed to parse deals response:', parseErr);
+      console.error('Response text:', text.slice(0, 200));
+      return [];
+    }
   } catch (err) {
     console.error('Error fetching deals:', err);
     return [];
