@@ -100,6 +100,40 @@ async function fetchDeals() {
   }
 }
 
+function createFormLinkMessage(link, prefix = '') {
+  return {
+    type: 'template',
+    altText: 'お客様サポートフォーム',
+    template: {
+      type: 'buttons',
+      text: `${prefix}\nお客様サポートフォームをご利用ください`,
+      actions: [
+        { type: 'uri', label: 'フォームを開く', uri: link }
+      ]
+    }
+  };
+}
+
+function createDealCarousel(deals) {
+  return {
+    type: 'flex',
+    altText: '案件情報',
+    contents: {
+      type: 'carousel',
+      contents: deals.slice(0, 10).map(d => ({
+        type: 'bubble',
+        body: {
+          type: 'box',
+          layout: 'vertical',
+          contents: [
+            { type: 'text', text: d.rawtext || JSON.stringify(d), wrap: true }
+          ]
+        }
+      }))
+    }
+  };
+}
+
 // Raw body parser for signature validation
 app.use('/webhook', express.raw({ type: 'application/json' }));
 app.use(express.json());
@@ -286,17 +320,15 @@ app.post('/submit', async (req, res) => {
 
     const deals = await fetchDeals();
     const matched = deals.filter(d => Array.isArray(d.code) && d.code.includes(prefectureCode));
-    let dealText = '';
+    let messages = [{ type: 'text', text: confirmationMessage }];
+
     if (matched.length > 0) {
-      dealText = matched.map(d => d.rawtext || JSON.stringify(d)).join('\n\n');
+      messages.push(createDealCarousel(matched));
     } else {
-      dealText = '現在該当する案件はありません。';
+      messages.push({ type: 'text', text: '現在該当する案件はありません。' });
     }
 
-    client.pushMessage(userId, [
-      { type: 'text', text: confirmationMessage },
-      { type: 'text', text: dealText }
-    ])
+    client.pushMessage(userId, messages)
       .then(() => {
         console.log('Message sent successfully to user:', userId);
         res.send(`
@@ -341,35 +373,23 @@ function handleEvent(event) {
   
   if (event.type === 'follow') {
     const userId = event.source.userId;
-    const domain = process.env.NGROK_DOMAIN || 'localhost:3000';
-    const protocol = domain.includes('ngrok') ? 'https' : 'http';
     const link = `https://customer-service-hjly.onrender.com/form?userId=${userId}`;
-    
+
     console.log('Sending form link to new follower:', link);
-    
-    const messages = [
-      { 
-        type: 'text', 
-        text: `ご登録ありがとうございます！\nお客様サポートフォームをご利用ください：\n${link}` 
-      }
-    ];
-    
+
+    const messages = [createFormLinkMessage(link, 'ご登録ありがとうございます！')];
+
     return client.replyMessage(event.replyToken, messages);
   }
-  
+
   if (event.type === 'message' && event.message.type === 'text') {
     const userId = event.source.userId;
     const domain = process.env.NGROK_DOMAIN || 'localhost:3000';
     const protocol = domain.includes('ngrok') ? 'https' : 'http';
     const link = `${protocol}://${domain}/form?userId=${userId}`;
-    
-    const messages = [
-      { 
-        type: 'text', 
-        text: `お客様サポートフォームをご利用ください：\n${link}` 
-      }
-    ];
-    
+
+    const messages = [createFormLinkMessage(link)];
+
     return client.replyMessage(event.replyToken, messages);
   }
   
