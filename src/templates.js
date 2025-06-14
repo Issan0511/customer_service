@@ -129,4 +129,4 @@ function getErrorHtml() {
           </html>`;
 }
 
-module.exports = { getFormHtml, getSuccessHtml, getErrorHtml };
+export { getFormHtml, getSuccessHtml, getErrorHtml };

@@ -1,3 +1,5 @@
+import fetch from 'node-fetch';
+
 const GAS_URL = process.env.GAS_URL;
 
 async function fetchDeals() {
@@ -51,4 +53,4 @@ function createDealCarousel(deals) {
   };
 }
 
-module.exports = { fetchDeals, createDealCarousel };
+export { fetchDeals, createDealCarousel };

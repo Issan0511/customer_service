@@ -1,32 +1,25 @@
 // src/gemini.js
-import { Client } from '@google/genai';
+import { GoogleGenerativeAI } from '@google/generative-ai';
 
 // 環境変数に GOOGLE_API_KEY を設定してください
-const apiKey = process.env.GOOGLE_API_KEY;
+const apiKey = process.env.GEMINI_API_KEY;
 if (!apiKey) {
-  throw new Error('環境変数 GOOGLE_API_KEY が設定されていません');
+  throw new Error('環境変数 GEMINI_API_KEY が設定されていません');
 }
 
 // Client インスタンスを生成
-const client = new Client({ apiKey });
+const client = new GoogleGenerativeAI(apiKey);
 
 // 使用するモデル名
-const MODEL_NAME = 'gemini-2.0-flash';
+const MODEL_NAME = 'gemini-pro';
 
 // テキストを投げて返信を得る関数
 export async function generateGeminiReply(text) {
   try {
-    const response = await client.generateContent({
-      model: MODEL_NAME,
-      contents: [
-        { role: 'user', parts: [{ text }] }
-      ],
-      // 必要に応じて generationConfig を追加可能
-      // generationConfig: { maxOutputTokens: 1024, temperature: 0.7 }
-    });
-
-    // レスポンスから第一候補のテキストを返す
-    return response.candidates?.[0]?.content?.parts?.[0]?.text ?? '';
+    const model = client.getGenerativeModel({ model: MODEL_NAME });
+    const result = await model.generateContent(text);
+    const response = await result.response;
+    return response.text() ?? '';
   } catch (err) {
     // エラー時にはステータスや詳細を投げてデバッグしやすく
     console.error('Gemini API エラー:', err);

@@ -1,11 +1,12 @@
-require('dotenv').config();
-const express = require('express');
-const line = require('@line/bot-sdk');
-const crypto = require('crypto');
-const { fetchDeals, createDealCarousel } = require("./src/deals");
-const { createFormLinkMessage } = require("./src/messages");
-const { getFormHtml, getSuccessHtml, getErrorHtml } = require("./src/templates");
-const createHandleEvent = require("./src/handlers");
+import 'dotenv/config';
+import express from 'express';
+import * as line from '@line/bot-sdk';
+import crypto from 'crypto';
+import { fetchDeals, createDealCarousel } from "./src/deals.js";
+import { createFormLinkMessage } from "./src/messages.js";
+import { getFormHtml, getSuccessHtml, getErrorHtml } from "./src/templates.js";
+import createHandleEvent from "./src/handlers.js";
+import fetch from 'node-fetch'; // node-fetch をインポート
 
 async function sendToSpreadsheet(data) {
   const res = await fetch(process.env.GAS_URL, {

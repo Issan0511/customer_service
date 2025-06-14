@@ -12,4 +12,4 @@ function createFormLinkMessage(link, prefix = '') {
   };
 }
 
-module.exports = { createFormLinkMessage };
+export { createFormLinkMessage };

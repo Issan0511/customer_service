@@ -1,5 +1,5 @@
-const { createFormLinkMessage } = require('./messages');
-const { generateGeminiReply } = require('./gemini');
+import { createFormLinkMessage } from './messages.js';
+import { generateGeminiReply } from './gemini.js';
 
 function createHandleEvent(client) {
   return async function handleEvent(event) {
@@ -28,4 +28,4 @@ function createHandleEvent(client) {
   };
 }
 
-module.exports = createHandleEvent;
+export default createHandleEvent;
