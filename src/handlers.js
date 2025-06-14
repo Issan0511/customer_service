@@ -1,7 +1,8 @@
 const { createFormLinkMessage } = require('./messages');
+const { generateGeminiReply } = require('./gemini');
 
 function createHandleEvent(client) {
-  return function handleEvent(event) {
+  return async function handleEvent(event) {
     console.log('Handling event:', event.type);
 
     if (event.type === 'follow') {
@@ -13,12 +14,14 @@ function createHandleEvent(client) {
     }
 
     if (event.type === 'message' && event.message.type === 'text') {
-      const userId = event.source.userId;
-      const domain = process.env.NGROK_DOMAIN || 'localhost:3000';
-      const protocol = domain.includes('ngrok') ? 'https' : 'http';
-      const link = `${protocol}://${domain}/form?userId=${userId}`;
-      const messages = [createFormLinkMessage(link)];
-      return client.replyMessage(event.replyToken, messages);
+      try {
+        const reply = await generateGeminiReply(event.message.text);
+        const messages = [{ type: 'text', text: reply || 'No response' }];
+        return client.replyMessage(event.replyToken, messages);
+      } catch (e) {
+        console.error('Gemini API error:', e);
+        return client.replyMessage(event.replyToken, [{ type: 'text', text: 'エラーが発生しました。' }]);
+      }
     }
 
     return Promise.resolve(null);
