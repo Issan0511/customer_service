@@ -11,7 +11,7 @@ if (!apiKey) {
 const client = new GoogleGenerativeAI(apiKey);
 
 // 使用するモデル名
-const MODEL_NAME = 'gemini-pro';
+const MODEL_NAME = 'gemini-2.0-flash';
 
 // テキストを投げて返信を得る関数
 export async function generateGeminiReply(text) {
