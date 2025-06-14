@@ -1,6 +1,7 @@
 import fetch from 'node-fetch';
 
 const GAS_URL = process.env.GAS_URL;
+const BOOKING_URL = process.env.BOOKING_URL || 'https://www.jicoo.com/t/wwxWIHEMKYUM/e/W4tjGZr5';
 
 async function fetchDeals() {
   try {
@@ -46,6 +47,21 @@ function createDealCarousel(deals) {
           layout: 'vertical',
           contents: [
             { type: 'text', text: d.rawtext || JSON.stringify(d), wrap: true }
+          ]
+        },
+        footer: {
+          type: 'box',
+          layout: 'vertical',
+          contents: [
+            {
+              type: 'button',
+              style: 'primary',
+              action: {
+                type: 'uri',
+                label: '案件を受ける',
+                uri: BOOKING_URL
+              }
+            }
           ]
         }
       }))
