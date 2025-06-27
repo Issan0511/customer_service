@@ -7,7 +7,9 @@ const userStates = {};
 // Simple psychological test questions
 const psychQuestions = [
   '今、誰にも見られてないとしたら「何をしてみたい」ですか？',
-  'この世界から「1つだけ」消せるとしたら、何を消しますか？'
+  'この世界から「1つだけ」消せるとしたら、何を消しますか？',
+  'あなたの親のことをどう思いますか？',
+  '全てのことに等しく意味があると思いますか？'
 ];
 
 function createHandleEvent(client) {
