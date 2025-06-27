@@ -6,8 +6,8 @@ const userStates = {};
 
 // Simple psychological test questions
 const psychQuestions = [
-  '心理テスト1: 好きな色を教えてください。',
-  '心理テスト2: 自分を動物に例えると何だと思いますか？'
+  '心理テスト1: 今、誰にも見られてないとしたら「何をしてみたい」ですか？',
+  '心理テスト2: この世界から「1つだけ」消せるとしたら、何を消しますか？'
 ];
 
 function createHandleEvent(client) {
