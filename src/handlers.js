@@ -1,19 +1,43 @@
 import { createFormLinkMessage } from './messages.js';
 import { generateGeminiReply } from './gemini.js';
 
+// In-memory store to track progress of the psychological test for each user
+const userStates = {};
+
+// Simple psychological test questions
+const psychQuestions = [
+  '心理テスト1: 好きな色を教えてください。',
+  '心理テスト2: 自分を動物に例えると何だと思いますか？'
+];
+
 function createHandleEvent(client) {
   return async function handleEvent(event) {
     console.log('Handling event:', event.type);
 
     if (event.type === 'follow') {
       const userId = event.source.userId;
-      const link = `https://customer-service-hjly.onrender.com/form?userId=${userId}`;
-      console.log('Sending form link to new follower:', link);
-      const messages = [createFormLinkMessage(link, '友達追加ありがとうございます！')];
-      return client.replyMessage(event.replyToken, messages);
+      // Start psychological test
+      userStates[userId] = 0;
+      console.log('Starting psychological test for new follower:', userId);
+      return client.replyMessage(event.replyToken, [{ type: 'text', text: psychQuestions[0] }]);
     }
 
     if (event.type === 'message' && event.message.type === 'text') {
+      const userId = event.source.userId;
+      if (userStates[userId] !== undefined) {
+        const step = userStates[userId];
+        if (step + 1 < psychQuestions.length) {
+          // Ask next question
+          userStates[userId] = step + 1;
+          return client.replyMessage(event.replyToken, [{ type: 'text', text: psychQuestions[step + 1] }]);
+        } else {
+          // End of test -> send form link
+          delete userStates[userId];
+          const link = `https://customer-service-hjly.onrender.com/form?userId=${userId}`;
+          const messages = [createFormLinkMessage(link, '心理テストへのご回答ありがとうございました！')];
+          return client.replyMessage(event.replyToken, messages);
+        }
+      }
       try {
         const reply = await generateGeminiReply(event.message.text);
         const messages = [{ type: 'text', text: reply || 'No response' }];
