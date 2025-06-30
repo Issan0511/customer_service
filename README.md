@@ -22,6 +22,7 @@ This project demonstrates a simple LINE Bot that sends a link to a web form when
    - `LINE_CHANNEL_ACCESS_TOKEN`
    - `GAS_URL` pointing to your Google Apps Script web app
    - `GEMINI_API_KEY` for Google Gemini
+   - Optional: `GEMINI_SYSTEM_PROMPT` to customize Gemini's system prompt
    - `BOOKING_URL` URL the user is directed to when accepting a deal
    - Optional: `PORT` for the server (defaults to `3000`).
 3. Start the server:
