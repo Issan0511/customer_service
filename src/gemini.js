@@ -10,6 +10,13 @@ if (!apiKey) {
 // Client インスタンスを生成
 const client = new GoogleGenerativeAI(apiKey);
 
+// 環境変数からシステムプロンプトを取得 (任意)
+let systemPrompt = process.env.GEMINI_SYSTEM_PROMPT || '';
+
+export function setSystemPrompt(prompt) {
+  systemPrompt = prompt;
+}
+
 // 使用するモデル名
 const MODEL_NAME = 'gemini-2.0-flash';
 
@@ -17,9 +24,16 @@ const MODEL_NAME = 'gemini-2.0-flash';
 export async function generateGeminiReply(text) {
   try {
     const model = client.getGenerativeModel({ model: MODEL_NAME });
-    const result = await model.generateContent(text);
-    const response = await result.response;
-    return response.text() ?? '';
+    if (systemPrompt) {
+      const chat = model.startChat({ systemInstruction: systemPrompt });
+      const result = await chat.sendMessage(text);
+      const response = await result.response;
+      return response.text() ?? '';
+    } else {
+      const result = await model.generateContent(text);
+      const response = await result.response;
+      return response.text() ?? '';
+    }
   } catch (err) {
     // エラー時にはステータスや詳細を投げてデバッグしやすく
     console.error('Gemini API エラー:', err);
