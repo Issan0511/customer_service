@@ -11,7 +11,7 @@ if (!apiKey) {
 const client = new GoogleGenerativeAI(apiKey);
 
 // 環境変数からシステムプロンプトを取得 (任意)
-let systemPrompt = process.env.GEMINI_SYSTEM_PROMPT || '';
+let systemPrompt = '';
 
 export function setSystemPrompt(prompt) {
   systemPrompt = prompt;
