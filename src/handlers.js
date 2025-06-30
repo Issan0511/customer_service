@@ -1,5 +1,5 @@
 import { createFormLinkMessage } from './messages.js';
-import { generateGeminiReply } from './gemini.js';
+import { generateDifyReply } from './dify.js';
 
 // ------ Psychological test feature (temporarily disabled) ------
 // const userStates = {};
@@ -39,11 +39,11 @@ function createHandleEvent(client) {
       //   }
       // }
       try {
-        const reply = await generateGeminiReply(event.message.text);
+        const reply = await generateDifyReply(event.message.text, userId);
         const messages = [{ type: 'text', text: reply || 'No response' }];
         return client.replyMessage(event.replyToken, messages);
       } catch (e) {
-        console.error('Gemini API error:', e);
+        console.error('Dify API error:', e);
         return client.replyMessage(event.replyToken, [{ type: 'text', text: 'エラーが発生しました。' }]);
       }
     }
