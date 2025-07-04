@@ -58,7 +58,7 @@ function createDealCarousel(deals) {
               style: 'primary',
               action: {
                 type: 'uri',
-                label: '案件を受ける',
+                label: '案件に応募',
                 uri: BOOKING_URL
               }
             }
