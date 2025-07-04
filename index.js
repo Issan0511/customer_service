@@ -139,17 +139,60 @@ app.get('/form', (req, res) => {
 
 // handle form submission
 app.post('/submit', async (req, res) => {
-  const { userId, name, prefectureCode, prefecture, hasVehicle, reward } = req.body;
-  console.log('Form submitted:', { userId, name, prefectureCode, prefecture, hasVehicle, reward });
+  const {
+    userId,
+    name,
+    prefectureCode,
+    prefecture,
+    address,
+    phoneNumber,
+    email,
+    drivingHistory,
+    hasVehicle,
+    hasLicense
+  } = req.body;
+  console.log('Form submitted:', {
+    userId,
+    name,
+    prefectureCode,
+    prefecture,
+    address,
+    phoneNumber,
+    email,
+    drivingHistory,
+    hasVehicle,
+    hasLicense
+  });
 
-  if (userId && name && prefectureCode && prefecture && hasVehicle && reward) {
+  if (
+    userId &&
+    name &&
+    prefectureCode &&
+    prefecture &&
+    address &&
+    phoneNumber &&
+    email &&
+    drivingHistory &&
+    hasVehicle &&
+    hasLicense
+  ) {
     try {
-      await sendToSpreadsheet({ userId, name, prefectureCode, prefecture, hasVehicle, reward });
+      await sendToSpreadsheet({
+        userId,
+        name,
+        prefectureCode,
+        prefecture,
+        address,
+        phoneNumber,
+        email,
+        drivingHistory,
+        hasVehicle,
+        hasLicense
+      });
       console.log('Data sent to GAS');
     } catch (e) {
       console.error('Failed to send data to GAS:', e);
     }
-    const vehicleText = hasVehicle === 'yes' ? 'あり' : 'なし';
     const confirmationMessage = `${name}様、エントリーありがとうございます！/nお住まいの地域に該当する案件をお探ししています。`;
 
     const deals = await fetchDeals();

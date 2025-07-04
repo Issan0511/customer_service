@@ -8,7 +8,7 @@ This project demonstrates a simple LINE Bot that sends a link to a web form when
 - Generates replies using Dify.
 - Handles LINE `follow` events to send a form link containing the LINE user ID.
 - Serves a basic HTML form at `/form`.
-- The form collects the driver's name, prefecture code and name, vehicle availability and desired compensation.
+- The form collects the user's name, prefecture, address, phone number, email, driving history, whether they own a delivery vehicle and whether they have a driving license.
 - On form submission, the bot sends a confirmation message back to the user.
 
 ## Setup
