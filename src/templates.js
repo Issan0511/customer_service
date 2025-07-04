@@ -19,10 +19,10 @@ function getFormHtml(userId = '') {
     <h1>Customer Service Form</h1>
     <form method="POST" action="/submit">
       <input type="hidden" name="userId" value="${userId}">
-      <label>お名前:</label>
+      <label>氏名を入力してください</label>
       <input type="text" name="name" required>
 
-      <label>居住地</label>
+      <label>都道府県を入力してください</label>
       <select id="prefectureSelect" name="prefectureCode" required>
         <option value="01">北海道</option>
         <option value="02">青森県</option>
@@ -74,14 +74,29 @@ function getFormHtml(userId = '') {
       </select>
       <input type="hidden" name="prefecture" id="prefecture">
 
-      <label>車両の有無:</label>
+      <label>続きのご住所を入力してください</label>
+      <input type="text" name="address" required>
+
+      <label>電話番号を入力してください</label>
+      <input type="text" name="phoneNumber" required>
+
+      <label>メールアドレスを入力してください</label>
+      <input type="text" name="email" required>
+
+      <label>運転歴を入力してください（例：5年）</label>
+      <input type="text" name="drivingHistory" required>
+
+      <label>軽配送車両をお持ちですか？</label>
       <select name="hasVehicle" required>
         <option value="yes">あり</option>
         <option value="no">なし</option>
       </select>
 
-      <label>報酬希望:</label>
-      <input type="text" name="reward" required>
+      <label>運転免許証はお持ちですか？</label>
+      <select name="hasLicense" required>
+        <option value="yes">あり</option>
+        <option value="no">なし</option>
+      </select>
 
 <button type="submit">送信</button>
     </form>

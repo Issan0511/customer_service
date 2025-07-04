@@ -8,8 +8,12 @@ async function testDeals() {
     name: '中塚一瑳',
     prefectureCode: '13',
     prefecture: '東京都',
+    address: '渋谷区',
+    phoneNumber: '0000000000',
+    email: 'sample@example.com',
+    drivingHistory: '5年',
     hasVehicle: 'yes',
-    reward: '10088'
+    hasLicense: 'yes'
   };
 
   console.log('GASからの生レスポンステキストを取得中...');
