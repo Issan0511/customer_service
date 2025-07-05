@@ -193,7 +193,9 @@ app.post('/submit', async (req, res) => {
     } catch (e) {
       console.error('Failed to send data to GAS:', e);
     }
-    const confirmationMessage = `${name}様、エントリーありがとうございます！/nお住まいの地域に該当する案件をお探ししています。`;
+    // "\n" を入れていたが、LINE側で改行が正しく扱われていなかったため
+    // 一続きの文に変更する
+    const confirmationMessage = `${name}様、エントリーありがとうございます！お住まいの地域に該当する案件をお探ししています。`;
 
     const deals = await fetchDeals();
     const matched = deals.filter(d => {
