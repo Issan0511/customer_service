@@ -18,7 +18,12 @@ function createHandleEvent(client) {
       const userId = event.source.userId;
       const link = `https://customer-service-hjly.onrender.com/form?userId=${userId}`;
       console.log('Sending form link to new follower:', userId);
-      const messages = [createFormLinkMessage(link, '友達追加ありがとうございます！')];
+      const messages = [createFormLinkMessage(
+        link,
+        '友達追加ありがとうございます！',
+        'すぐにお仕事紹介を希望ならこちらから👇🏻\nたった1分で完了',
+        '▶ フォームを開く'
+      )];
       return client.replyMessage(event.replyToken, messages);
     }
 
