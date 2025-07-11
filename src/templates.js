@@ -6,10 +6,10 @@ function getFormHtml(userId = '') {
   <title>Customer Service Form</title>
   <style>
     body { font-family: Arial, sans-serif; margin: 40px; background-color: #f5f5f5; }
-    .container { max-width: 500px; margin: 0 auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+    .container { max-width: 600px; margin: 0 auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
     h1 { color: #333; text-align: center; }
     label { display: block; margin: 15px 0 5px; font-weight: bold; }
-    input[type="text"] { width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 5px; font-size: 16px; }
+    input[type="text"] { width: 100%; padding: 15px; border: 2px solid #ddd; border-radius: 5px; font-size: 18px; }
     button { background-color: #00C300; color: white; padding: 15px 30px; border: none; border-radius: 5px; font-size: 16px; cursor: pointer; width: 100%; margin-top: 20px; }
     button:hover { background-color: #00A300; }
   </style>
