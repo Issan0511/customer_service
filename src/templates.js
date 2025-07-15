@@ -1,17 +1,59 @@
 function getFormHtml(userId = '') {
   return `<!DOCTYPE html>
-<html>
+<html lang="ja">
 <head>
   <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Customer Service Form</title>
   <style>
-    body { font-family: Arial, sans-serif; margin: 40px; background-color: #f5f5f5; }
-    .container { max-width: 600px; margin: 0 auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-    h1 { color: #333; text-align: center; }
+    /* ベーススタイル */
+    body { font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f5f5f5; }
+    .container { 
+      max-width: 600px; 
+      width: 90%;
+      margin: 40px auto; 
+      background: #fff; 
+      padding: 30px; 
+      border-radius: 10px; 
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      box-sizing: border-box;
+    }
+    h1 { color: #333; text-align: center; margin-bottom: 20px; }
     label { display: block; margin: 15px 0 5px; font-weight: bold; }
-    input[type="text"] { width: 100%; padding: 15px; border: 2px solid #ddd; border-radius: 5px; font-size: 18px; }
-    button { background-color: #00C300; color: white; padding: 15px 30px; border: none; border-radius: 5px; font-size: 16px; cursor: pointer; width: 100%; margin-top: 20px; }
+    input[type="text"], select { 
+      width: 100%; 
+      padding: 15px; 
+      border: 2px solid #ddd; 
+      border-radius: 5px; 
+      font-size: 18px;
+      box-sizing: border-box;
+    }
+    button { 
+      background-color: #00C300; 
+      color: white; 
+      padding: 15px 30px; 
+      border: none; 
+      border-radius: 5px; 
+      font-size: 16px; 
+      cursor: pointer; 
+      width: 100%; 
+      margin-top: 20px;
+      box-sizing: border-box;
+    }
     button:hover { background-color: #00A300; }
+
+    /* レスポンシブ調整 */
+    @media (max-width: 480px) {
+      .container {
+        padding: 20px;
+        margin: 20px auto;
+      }
+      input[type="text"], select, button {
+        padding: 12px;
+        font-size: 16px;
+      }
+      label { margin: 10px 0 4px; font-size: 16px; }
+    }
   </style>
 </head>
 <body>
@@ -19,10 +61,11 @@ function getFormHtml(userId = '') {
     <h1>Customer Service Form</h1>
     <form method="POST" action="/submit">
       <input type="hidden" name="userId" value="${userId}">
-      <label>氏名を入力してください</label>
-      <input type="text" name="name" required>
 
-      <label>都道府県を入力してください</label>
+      <label for="name">氏名を入力してください</label>
+      <input type="text" id="name" name="name" required>
+
+      <label for="prefectureSelect">都道府県を入力してください</label>
       <select id="prefectureSelect" name="prefectureCode" required>
         <option value="01">北海道</option>
         <option value="02">青森県</option>
@@ -74,31 +117,31 @@ function getFormHtml(userId = '') {
       </select>
       <input type="hidden" name="prefecture" id="prefecture">
 
-      <label>続きのご住所を入力してください</label>
-      <input type="text" name="address" required>
+      <label for="address">続きのご住所を入力してください</label>
+      <input type="text" id="address" name="address" required>
 
-      <label>電話番号を入力してください</label>
-      <input type="text" name="phoneNumber" required>
+      <label for="phoneNumber">電話番号を入力してください</label>
+      <input type="text" id="phoneNumber" name="phoneNumber" required>
 
-      <label>メールアドレスを入力してください</label>
-      <input type="text" name="email" required>
+      <label for="email">メールアドレスを入力してください</label>
+      <input type="text" id="email" name="email" required>
 
-      <label>運転歴を入力してください（例：5年）</label>
-      <input type="text" name="drivingHistory" required>
+      <label for="drivingHistory">運転歴を入力してください（例：5年）</label>
+      <input type="text" id="drivingHistory" name="drivingHistory" required>
 
-      <label>軽配送車両をお持ちですか？</label>
-      <select name="hasVehicle" required>
+      <label for="hasVehicle">軽配送車両をお持ちですか？</label>
+      <select id="hasVehicle" name="hasVehicle" required>
         <option value="yes">あり</option>
         <option value="no">なし</option>
       </select>
 
-      <label>運転免許証はお持ちですか？</label>
-      <select name="hasLicense" required>
+      <label for="hasLicense">運転免許証はお持ちですか？</label>
+      <select id="hasLicense" name="hasLicense" required>
         <option value="yes">あり</option>
         <option value="no">なし</option>
       </select>
 
-<button type="submit">送信</button>
+      <button type="submit">送信</button>
     </form>
   </div>
   <script>
