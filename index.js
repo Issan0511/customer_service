@@ -49,6 +49,11 @@ const app = express();
 
 const handleEvent = createHandleEvent(client);
 
+// Health check endpoint for Render
+app.get('/health', (req, res) => {
+  res.status(200).json({ status: 'OK', timestamp: new Date().toISOString() });
+});
+
 // Raw body parser for signature validation
 app.use('/webhook', express.raw({ type: 'application/json' }));
 app.use(express.json());
